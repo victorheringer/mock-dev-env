@@ -2,7 +2,7 @@ import { MongoClient } from "mongodb";
 import dotenv from "dotenv";
 dotenv.config();
 
-export async function criarRegistroMongo() {
+export async function createRegisterMongo() {
   const client = new MongoClient(process.env.MONGO_URI);
   await client.connect();
   console.log("Connected to MongoDB");

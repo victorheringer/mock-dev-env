@@ -3,7 +3,7 @@ const { Client } = pkg;
 import dotenv from "dotenv";
 dotenv.config();
 
-export async function criarRegistroPostgres() {
+export async function createRegisterPostgres() {
   const client = new Client({
     host: process.env.POSTGRES_HOST,
     port: process.env.POSTGRES_PORT,
