@@ -1,0 +1,14 @@
+{
+  "name": "mock-dev-env-test",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "dependencies": {
+    "pg": "^8.11.1",
+    "mongodb": "^5.7.0",
+    "redis": "^4.7.0",
+    "nodemailer": "^6.9.5",
+    "minio": "^7.0.18",
+    "dotenv": "^16.3.1"
+  }
+}

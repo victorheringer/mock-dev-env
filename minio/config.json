@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "credential": {
+    "accessKey": "devuser",
+    "secretKey": "devpass123"
+  },
+  "region": "us-east-1",
+  "browser": "on"
+}
