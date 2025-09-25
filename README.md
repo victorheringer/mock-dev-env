@@ -139,6 +139,58 @@ docker compose down -v
 | MailCatcher SMTP | 1025      | 1025           |
 | MailCatcher Web  | 1080      | 1080           |
 
+## MinIO Client (mc)
+
+The MinIO Client (`mc`) is a command-line tool to interact with your MinIO server. It allows you to manage buckets, upload and download files, and perform administrative tasks directly from a terminal.
+
+### Accessing the mc console
+
+We provide an interactive `mc` container that is pre-configured with your MinIO credentials. To access it, run:
+
+```bash
+docker compose run mc
+```
+
+This will open a shell inside the container with the MinIO alias `localminio` already set up. You do not need to enter the access key or secret manually.
+
+### Basic mc commands
+
+Once inside the `mc` shell, you can use the following commands:
+
+- **List buckets**:
+
+```bash
+mc ls localminio
+```
+
+- **Create a new bucket**:
+
+```bash
+mc mb localminio/test
+```
+
+- **Upload a file to a bucket**:
+
+```bash
+echo "Hello MinIO!" > test.txt
+mc cp test.txt localminio/test/
+```
+
+- **List files in a bucket**:
+
+```bash
+mc ls localminio/test
+```
+
+- **View server information**:
+
+```bash
+mc admin info localminio
+```
+
+- The `mc` container is interactive, so you can use it as a CLI to manage your MinIO instance anytime.
+- It shares the same Docker network as your MinIO container, so you can access MinIO using the service name (`minio`) instead of \`loc
+
 ## Notes
 
 - This environment is for local development only.
