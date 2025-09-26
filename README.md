@@ -7,11 +7,14 @@ This project sets up a local development environment with the following services
 - Redis
 - MinIO (S3-compatible storage)
 - MailCatcher (email testing)
+- RabbitMQ (message broker)
 - Web Clients
+
   - pgAdmin
   - Mongo Express
   - Redis Commander
   - MinIO Console
+  - RabbitMQ Management UI
 
 The goal is to provide a simple infrastructure so backend and frontend containers can easily connect during development.
 
@@ -76,10 +79,12 @@ docker compose down -v
 - Password: devpass
 - Database: devdb
 - Web Client (pgAdmin):
-  - URL: http://localhost:5050
-  - Email: admin@dev.com
+
+  - URL: [http://localhost:5050](http://localhost:5050)
+  - Email: [admin@dev.com](mailto:admin@dev.com)
   - Password: admin
   - Note: Inside pgAdmin, create a server with:
+
     - Hostname: postgres
     - Port: 5432
     - User: devuser
@@ -92,7 +97,8 @@ docker compose down -v
 - Root User: devuser
 - Root Password: devpass
 - Web Client (Mongo Express):
-  - URL: http://localhost:8081
+
+  - URL: [http://localhost:8081](http://localhost:8081)
   - HTTP Login: devuser
   - HTTP Password: devpass
   - Note: Automatically connects to the Mongo container
@@ -103,17 +109,23 @@ docker compose down -v
 - Container: redis
 - Access: no password by default
 - Web Client (Redis Commander):
-  - URL: http://localhost:8082
+
+  - URL: [http://localhost:8082](http://localhost:8082)
   - HTTP Login: admin
   - HTTP Password: admin
+
 - CLI:
+
+  ```bash
   docker exec -it dev_redis redis-cli
+  ```
+
   Example: set foo bar / get foo
 
 ### MinIO
 
-- S3 API: http://localhost:9000
-- Web Console: http://localhost:9001
+- S3 API: [http://localhost:9000](http://localhost:9000)
+- Web Console: [http://localhost:9001](http://localhost:9001)
 - User: devuser
 - Password: devpass123
 
@@ -122,7 +134,19 @@ docker compose down -v
 - Container: dev_mailcatcher
 - SMTP Port: 1025
 - Web Port: 1080
-- Web Interface URL: http://localhost:1080
+- Web Interface URL: [http://localhost:1080](http://localhost:1080)
+
+### RabbitMQ
+
+- Host Port: 5672
+- Container: rabbitmq
+- User: devuser
+- Password: devpass
+- Management UI:
+
+  - URL: [http://localhost:15672](http://localhost:15672)
+  - User: devuser
+  - Password: devpass
 
 ### Summary of Exposed Ports
 
@@ -138,6 +162,8 @@ docker compose down -v
 | MinIO Console    | 9001      | 9001           |
 | MailCatcher SMTP | 1025      | 1025           |
 | MailCatcher Web  | 1080      | 1080           |
+| RabbitMQ         | 5672      | 5672           |
+| RabbitMQ UI      | 15672     | 15672          |
 
 ## MinIO Client (mc)
 
@@ -189,7 +215,7 @@ mc admin info localminio
 ```
 
 - The `mc` container is interactive, so you can use it as a CLI to manage your MinIO instance anytime.
-- It shares the same Docker network as your MinIO container, so you can access MinIO using the service name (`minio`) instead of \`loc
+- It shares the same Docker network as your MinIO container, so you can access MinIO using the service name (`minio`) instead of `localhost`.
 
 ## Notes
 
@@ -197,8 +223,10 @@ mc admin info localminio
 - For production, use secure environment variables and a secrets management system.
 - All web clients use HTTP authentication for access.
 - Backend/Frontend containers can connect using Docker service names:
+
   - postgres
   - mongo
   - redis
   - minio
   - mailcatcher
+  - rabbitmq

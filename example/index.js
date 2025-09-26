@@ -3,6 +3,7 @@ import { createRegisterMongo } from "./services/mongo.js";
 import { createRegisterRedis } from "./services/redis.js";
 import { sendEmail } from "./services/mail.js";
 import { createFileMinio } from "./services/minio.js";
+import { createTestRabbitMQ } from "./services/rabbitmq.js";
 
 async function main() {
   console.log("=== Testing PostgreSQL ===");
@@ -19,6 +20,9 @@ async function main() {
 
   console.log("\n=== Testing MinIO ===");
   await createFileMinio();
+
+  console.log("\n=== Testing RabbitMQ ===");
+  await createTestRabbitMQ();
 
   console.log("\nAll tests completed!");
 }
