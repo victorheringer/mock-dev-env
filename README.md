@@ -8,13 +8,14 @@ This project sets up a local development environment with the following services
 - MinIO (S3-compatible storage)
 - MailCatcher (email testing)
 - RabbitMQ (message broker)
+- Loki (log aggregation)
 - Web Clients
-
   - pgAdmin
   - Mongo Express
   - Redis Commander
   - MinIO Console
   - RabbitMQ Management UI
+  - Grafana UI
 
 The goal is to provide a simple infrastructure so backend and frontend containers can easily connect during development.
 
@@ -148,6 +149,43 @@ docker compose down -v
   - User: devuser
   - Password: devpass
 
+### Grafana / Loki
+
+- Grafana UI: [http://localhost:3000](http://localhost:3000)
+- Admin User: admin
+- Admin Password: admin
+
+#### Configuring Loki datasource
+
+After starting the containers, you need to configure the Loki datasource in Grafana:
+
+1. Open Grafana in your browser: [http://localhost:3000](http://localhost:3000)
+2. Go to ⚙️ **Configuration → Data Sources → Add data source → Loki**
+3. Set the **URL** to:
+
+```
+http://loki:3100
+```
+
+> Important: This URL uses the **Docker Compose service name** (`loki`) because Grafana communicates with Loki internally within Docker.
+> If the URL is left empty or set incorrectly, you may see errors like `unsupported protocol scheme ""` and logs will not appear.
+
+4. Click **Save & Test**. You should see a confirmation that the datasource is working.
+
+#### Viewing Logs
+
+1. Go to the **Explore** section (compass icon).
+2. Select **Loki** as the datasource.
+3. Use a LogQL query to filter logs, for example:
+
+```
+{service="test-service", env="dev"}
+```
+
+4. Make sure the time range includes when logs were sent (e.g., "Last 5 minutes").
+
+Now your test logs sent from Node.js or other services should appear in Grafana.
+
 ### Summary of Exposed Ports
 
 | Service          | Host Port | Container Port |
@@ -164,58 +202,8 @@ docker compose down -v
 | MailCatcher Web  | 1080      | 1080           |
 | RabbitMQ         | 5672      | 5672           |
 | RabbitMQ UI      | 15672     | 15672          |
-
-## MinIO Client (mc)
-
-The MinIO Client (`mc`) is a command-line tool to interact with your MinIO server. It allows you to manage buckets, upload and download files, and perform administrative tasks directly from a terminal.
-
-### Accessing the mc console
-
-We provide an interactive `mc` container that is pre-configured with your MinIO credentials. To access it, run:
-
-```bash
-docker compose run mc
-```
-
-This will open a shell inside the container with the MinIO alias `localminio` already set up. You do not need to enter the access key or secret manually.
-
-### Basic mc commands
-
-Once inside the `mc` shell, you can use the following commands:
-
-- **List buckets**:
-
-```bash
-mc ls localminio
-```
-
-- **Create a new bucket**:
-
-```bash
-mc mb localminio/test
-```
-
-- **Upload a file to a bucket**:
-
-```bash
-echo "Hello MinIO!" > test.txt
-mc cp test.txt localminio/test/
-```
-
-- **List files in a bucket**:
-
-```bash
-mc ls localminio/test
-```
-
-- **View server information**:
-
-```bash
-mc admin info localminio
-```
-
-- The `mc` container is interactive, so you can use it as a CLI to manage your MinIO instance anytime.
-- It shares the same Docker network as your MinIO container, so you can access MinIO using the service name (`minio`) instead of `localhost`.
+| Grafana UI       | 3000      | 3000           |
+| Loki API         | 3100      | 3100           |
 
 ## Notes
 
@@ -230,3 +218,4 @@ mc admin info localminio
   - minio
   - mailcatcher
   - rabbitmq
+  - loki
