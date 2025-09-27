@@ -138,6 +138,18 @@ services:
     volumes:
       - grafana_data:/var/lib/grafana
 
+  ultrahook:
+    container_name: dev_ultrahook
+    image: stacksimple/ultrahook:latest
+    environment:
+      ULTRAHOOK_API_KEY: "${ULTRAHOOK_API_KEY}"
+      ULTRAHOOK_LOCAL_URL: "${ULTRAHOOK_LOCAL_URL}"
+    restart: always
+    ports:
+      - "${ULTRAHOOK_PORT}:5000"
+    entrypoint: >
+      sh -c 'exec ultrahook ${ULTRAHOOK_NAMESPACE} ${ULTRAHOOK_LOCAL_URL}'
+
 volumes:
   postgres_data:
   mongo_data:

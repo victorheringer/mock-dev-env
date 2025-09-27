@@ -9,6 +9,7 @@ This project sets up a local development environment with the following services
 - MailCatcher (email testing)
 - RabbitMQ (message broker)
 - Loki (log aggregation)
+- Ultrahook (webhook tunnel)
 - Web Clients
   - pgAdmin
   - Mongo Express
@@ -24,8 +25,13 @@ The goal is to provide a simple infrastructure so backend and frontend container
 ```
 docker/
 ├─ docker-compose.yml
-├─ .env
+├─ .env-example          # Template with default values
 ├─ minio/
+├─ example/              # Example Node.js services and webhook server
+│  ├─ services/          # Individual service test files
+│  ├─ server.js          # Webhook receiver server (port 3001)
+│  ├─ index.js           # Test runner for all services
+│  └─ package.json       # Dependencies for examples
 └─ test-app/
 ```
 
@@ -33,6 +39,54 @@ Optional files:
 
 - postgres/init.sql → create initial tables/data in Postgres
 - minio/config.json → configure buckets in MinIO
+
+## Environment Configuration
+
+Before starting the services, you need to create your environment configuration file:
+
+### Quick Setup (Default Values)
+
+Copy the example file to create your `.env`:
+
+**Linux/macOS:**
+
+```bash
+cp .env-example .env
+```
+
+**Windows (Command Prompt):**
+
+```cmd
+copy .env-example .env
+```
+
+**Windows (PowerShell):**
+
+```powershell
+Copy-Item .env-example .env
+```
+
+### Custom Configuration
+
+1. Copy the example file: `cp .env-example .env` (or use Windows commands above)
+2. Edit `.env` with your preferred text editor
+3. Customize the values you want to change:
+
+**Important variables to customize:**
+
+```bash
+# Ultrahook - Required for webhook functionality
+ULTRAHOOK_NAMESPACE=<your-namespace-here>
+ULTRAHOOK_API_KEY=<your-api-key-here>
+ULTRAHOOK_LOCAL_URL=http://host.docker.internal:3001/<your-path-here>
+```
+
+**For Ultrahook setup:**
+
+1. Sign up at [ultrahook.com](https://www.ultrahook.com)
+2. Get your API key from the dashboard
+3. Choose a unique namespace
+4. Update these values in your `.env` file
 
 ## How to start/stop the environment
 
@@ -186,6 +240,68 @@ http://loki:3100
 
 Now your test logs sent from Node.js or other services should appear in Grafana.
 
+### Ultrahook (Webhook Tunnel)
+
+- Container: dev_ultrahook
+- Host Port: 5000
+- Tunnel URL: `http://<your-namespace>.<your-namespace>.ultrahook.com`
+- Local Target: `http://host.docker.internal:3001/webhook-test`
+- API Key: Configured in environment variables
+
+Ultrahook creates a secure tunnel from the internet to your local development environment, allowing you to receive webhooks from external services.
+
+> **⚠️ Important**: You need to configure your own Ultrahook credentials in the `.env` file before using this service.
+
+#### How it works
+
+1. **External services** send webhooks to: `http://<your-namespace>.<your-namespace>.ultrahook.com`
+2. **Ultrahook tunnel** forwards the request to: `http://host.docker.internal:3001/webhook-test`
+3. **Local webhook server** (in `/example` folder) receives and processes the webhook
+
+#### Example webhook server
+
+The project includes an example webhook server in the `example/` folder:
+
+```bash
+cd example
+node server.js
+```
+
+This starts a webhook receiver on port 3001 that logs incoming webhooks:
+
+- **Endpoint**: `http://localhost:3001/webhook-test`
+- **Method**: POST
+- **Response**: Returns "OK" and logs the webhook payload
+
+#### Testing webhooks
+
+You can test the complete webhook flow using the example scripts:
+
+```bash
+cd example
+npm install
+node index.js  # Runs all service tests including Ultrahook
+```
+
+Or test just the webhook:
+
+```bash
+cd example
+node -e "import('./services/ultrahook.js').then(m => m.sendTestWebhook())"
+```
+
+#### Configuration
+
+Ultrahook requires your own account and API key. See the **Environment Configuration** section at the beginning of this document for setup instructions.
+
+After configuring your `.env` file, restart the container:
+
+```bash
+docker-compose restart ultrahook
+```
+
+Your tunnel will be available at: `http://your-namespace.your-namespace.ultrahook.com`
+
 ### Summary of Exposed Ports
 
 | Service          | Host Port | Container Port |
@@ -204,6 +320,7 @@ Now your test logs sent from Node.js or other services should appear in Grafana.
 | RabbitMQ UI      | 15672     | 15672          |
 | Grafana UI       | 3000      | 3000           |
 | Loki API         | 3100      | 3100           |
+| Ultrahook        | 5000      | 5000           |
 
 ## Notes
 
@@ -219,3 +336,8 @@ Now your test logs sent from Node.js or other services should appear in Grafana.
   - mailcatcher
   - rabbitmq
   - loki
+
+- The `example/` folder contains Node.js services for testing all components:
+  - Run `node server.js` to start the webhook receiver on port 3001
+  - Run `node index.js` to test all services including webhook functionality
+  - Each service has its own test file in the `services/` subdirectory

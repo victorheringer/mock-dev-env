@@ -6,6 +6,7 @@
   "dependencies": {
     "amqplib": "^0.10.9",
     "dotenv": "^16.3.1",
+    "express": "^5.1.0",
     "minio": "^7.0.18",
     "mongodb": "^5.7.0",
     "nodemailer": "^6.9.5",
