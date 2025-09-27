@@ -27,21 +27,21 @@ docker-compose ps
 
 ## 📊 Services Overview
 
-| Service | URL | Default Credentials | Purpose |
-|---------|-----|-------------------|---------|
-| 🐘 **PostgreSQL** | `localhost:5432` | `devuser/devpass` | Relational database |
-| 🍃 **MongoDB** | `localhost:27017` | `devuser/devpass` | Document database |
-| 🔴 **Redis** | `localhost:6379` | No auth | Cache & sessions |
-| 📦 **MinIO** | [localhost:9001](http://localhost:9001) | `devuser/devpass123` | S3-compatible storage |
-| 📧 **MailCatcher** | [localhost:1080](http://localhost:1080) | No auth | Email testing |
-| 🐰 **RabbitMQ** | [localhost:15672](http://localhost:15672) | `devuser/devpass` | Message broker |
-| 📈 **Grafana** | [localhost:3000](http://localhost:3000) | `admin/admin` | Monitoring & logs |
-| 🌐 **Ultrahook** | Custom URL | Your credentials | Webhook tunnel |
+| Service            | URL                                       | Default Credentials  | Purpose               |
+| ------------------ | ----------------------------------------- | -------------------- | --------------------- |
+| 🐘 **PostgreSQL**  | `localhost:5432`                          | `devuser/devpass`    | Relational database   |
+| 🍃 **MongoDB**     | `localhost:27017`                         | `devuser/devpass`    | Document database     |
+| 🔴 **Redis**       | `localhost:6379`                          | No auth              | Cache & sessions      |
+| 📦 **MinIO**       | [localhost:9001](http://localhost:9001)   | `devuser/devpass123` | S3-compatible storage |
+| 📧 **MailCatcher** | [localhost:1080](http://localhost:1080)   | No auth              | Email testing         |
+| 🐰 **RabbitMQ**    | [localhost:15672](http://localhost:15672) | `devuser/devpass`    | Message broker        |
+| 📈 **Grafana**     | [localhost:3000](http://localhost:3000)   | `admin/admin`        | Monitoring & logs     |
+| 🌐 **Ultrahook**   | Custom URL                                | Your credentials     | Webhook tunnel        |
 
 ### 🎛️ Web Management Interfaces
 
 - **pgAdmin**: [localhost:5050](http://localhost:5050) - PostgreSQL admin
-- **Mongo Express**: [localhost:8081](http://localhost:8081) - MongoDB admin  
+- **Mongo Express**: [localhost:8081](http://localhost:8081) - MongoDB admin
 - **Redis Commander**: [localhost:8082](http://localhost:8082) - Redis admin
 - **MinIO Console**: [localhost:9001](http://localhost:9001) - File storage admin
 - **RabbitMQ Management**: [localhost:15672](http://localhost:15672) - Queue admin
@@ -83,7 +83,7 @@ cp .env-example .env
 # Windows (Command Prompt)
 copy .env-example .env
 
-# Windows (PowerShell)  
+# Windows (PowerShell)
 Copy-Item .env-example .env
 ```
 
@@ -106,7 +106,8 @@ GRAFANA_ADMIN_PASSWORD=<your-admin-password>
 ```
 
 **🌐 Ultrahook Setup** (for webhook testing):
-1. Sign up at [ultrahook.com](https://www.ultrahook.com) 
+
+1. Sign up at [ultrahook.com](https://www.ultrahook.com)
 2. Get your API key from the dashboard
 3. Choose a unique namespace
 4. Update the values in your `.env` file
@@ -160,11 +161,13 @@ docker-compose restart ultrahook
 <summary><strong>🐘 PostgreSQL Configuration</strong></summary>
 
 **Connection Details:**
+
 - Host: `localhost:5432` (external) or `postgres:5432` (internal)
 - Database: `devdb`
 - User/Pass: `devuser/devpass`
 
 **pgAdmin Access:**
+
 - URL: [localhost:5050](http://localhost:5050)
 - Login: `admin@dev.com` / `admin`
 - **Setup**: Create new server with hostname `postgres`, port `5432`
@@ -174,10 +177,12 @@ docker-compose restart ultrahook
 <summary><strong>🍃 MongoDB Configuration</strong></summary>
 
 **Connection Details:**
+
 - URI: `mongodb://devuser:devpass@localhost:27017` (external)
 - URI: `mongodb://devuser:devpass@mongo:27017` (internal)
 
 **Mongo Express Access:**
+
 - URL: [localhost:8081](http://localhost:8081)
 - Login: `devuser/devpass`
 </details>
@@ -186,29 +191,35 @@ docker-compose restart ultrahook
 <summary><strong>🔴 Redis Configuration</strong></summary>
 
 **Connection Details:**
+
 - Host: `localhost:6379` (external) or `redis:6379` (internal)
 - No password required
 
 **Redis Commander:**
+
 - URL: [localhost:8082](http://localhost:8082)
 - Login: `admin/admin`
 
 **CLI Access:**
+
 ```bash
 docker exec -it dev_redis redis-cli
 ```
+
 </details>
 
 <details>
 <summary><strong>📦 MinIO (S3) Configuration</strong></summary>
 
 **Connection Details:**
+
 - API Endpoint: `http://localhost:9000`
 - Access Key: `devuser`
 - Secret Key: `devpass123`
 - Default Bucket: `test`
 
 **Web Console:**
+
 - URL: [localhost:9001](http://localhost:9001)
 - Login: `devuser/devpass123`
 </details>
@@ -217,11 +228,13 @@ docker exec -it dev_redis redis-cli
 <summary><strong>📧 MailCatcher Configuration</strong></summary>
 
 **SMTP Settings (for your app):**
+
 - Host: `mailcatcher` or `localhost`
 - Port: `1025`
 - No authentication required
 
 **Web Interface:**
+
 - URL: [localhost:1080](http://localhost:1080)
 - View all sent emails here
 </details>
@@ -230,11 +243,13 @@ docker exec -it dev_redis redis-cli
 <summary><strong>🐰 RabbitMQ Configuration</strong></summary>
 
 **Connection Details:**
+
 - Host: `rabbitmq:5672` (internal) or `localhost:5672` (external)
 - User/Pass: `devuser/devpass`
 - Default Queue: `test-queue`
 
 **Management UI:**
+
 - URL: [localhost:15672](http://localhost:15672)
 - Login: `devuser/devpass`
 </details>
@@ -243,15 +258,18 @@ docker exec -it dev_redis redis-cli
 <summary><strong>📈 Grafana & Loki Setup</strong></summary>
 
 **Grafana Access:**
+
 - URL: [localhost:3000](http://localhost:3000)
 - Login: `admin/admin`
 
 **Loki Configuration:**
+
 1. Go to **Configuration → Data Sources → Add Loki**
 2. Set URL to: `http://loki:3100`
 3. Save & Test
 
 **Viewing Logs:**
+
 - Go to **Explore** section
 - Use LogQL queries like: `{service="test-service", env="dev"}`
 </details>
@@ -262,11 +280,13 @@ docker exec -it dev_redis redis-cli
 Ultrahook requires your own account and API key. See the **Environment Configuration** section for setup instructions.
 
 After configuring your `.env` file:
+
 ```bash
 docker-compose restart ultrahook
 ```
 
 Your tunnel will be available at: `http://your-namespace.your-namespace.ultrahook.com`
+
 </details>
 
 ### Summary of Exposed Ports
@@ -294,6 +314,7 @@ Your tunnel will be available at: `http://your-namespace.your-namespace.ultrahoo
 The `example/` folder contains Node.js services to test all components:
 
 ### Run All Tests
+
 ```bash
 cd example
 npm install
@@ -301,6 +322,7 @@ node index.js  # Tests all services including webhooks
 ```
 
 ### Individual Service Tests
+
 ```bash
 cd example
 
@@ -311,6 +333,7 @@ node -e "import('./services/ultrahook.js').then(m => m.sendTestWebhook())"
 ```
 
 ### Webhook Testing
+
 ```bash
 # Start webhook receiver
 node server.js  # Runs on port 3001
@@ -320,6 +343,7 @@ node -e "import('./services/ultrahook.js').then(m => m.sendTestWebhook())"
 ```
 
 **Expected output:**
+
 ```
 === Testing PostgreSQL ===
 ✅ Connected to PostgreSQL
@@ -336,6 +360,7 @@ node -e "import('./services/ultrahook.js').then(m => m.sendTestWebhook())"
 <summary><strong>🐳 Services won't start</strong></summary>
 
 **Common solutions:**
+
 - Check if ports are in use: `netstat -tuln | grep :5432`
 - Verify Docker is running: `docker info`
 - Reset everything: `docker-compose down -v && docker-compose up -d`
@@ -346,8 +371,9 @@ node -e "import('./services/ultrahook.js').then(m => m.sendTestWebhook())"
 <summary><strong>🌐 Ultrahook not working</strong></summary>
 
 **Check these:**
+
 - Verify credentials in `.env` file
-- Check container logs: `docker logs dev_ultrahook`  
+- Check container logs: `docker logs dev_ultrahook`
 - Ensure webhook server is running: `cd example && node server.js`
 - Test direct connection: `curl -X POST http://localhost:3001/webhook-test`
 </details>
@@ -356,6 +382,7 @@ node -e "import('./services/ultrahook.js').then(m => m.sendTestWebhook())"
 <summary><strong>🔐 Can't access web interfaces</strong></summary>
 
 **Verify:**
+
 - Services are running: `docker-compose ps`
 - Ports are not blocked by firewall
 - Use correct credentials from the table above
@@ -366,6 +393,7 @@ node -e "import('./services/ultrahook.js').then(m => m.sendTestWebhook())"
 <summary><strong>🗄️ Database connection issues</strong></summary>
 
 **From your application:**
+
 - Use Docker service names (`postgres`, `mongo`, `redis`)
 - Don't use `localhost` when connecting from containers
 - Check credentials match your `.env` file
@@ -374,28 +402,31 @@ node -e "import('./services/ultrahook.js').then(m => m.sendTestWebhook())"
 ## 💡 Development Tips
 
 ### Connecting from Your Application
+
 ```javascript
 // ✅ Correct - Use service names for inter-container communication
 const dbConfig = {
-  host: 'postgres',  // Not 'localhost'!
+  host: "postgres", // Not 'localhost'!
   port: 5432,
-  user: 'devuser',
-  password: 'devpass'
-}
+  user: "devuser",
+  password: "devpass",
+};
 
 // ✅ For external connections (from your IDE, etc.)
 const externalConfig = {
-  host: 'localhost',  // or '127.0.0.1'
+  host: "localhost", // or '127.0.0.1'
   port: 5432,
-  user: 'devuser', 
-  password: 'devpass'
-}
+  user: "devuser",
+  password: "devpass",
+};
 ```
 
 ### Service Discovery
+
 All services are accessible by their container names:
+
 - `postgres` - PostgreSQL database
-- `mongo` - MongoDB database  
+- `mongo` - MongoDB database
 - `redis` - Redis cache
 - `minio` - MinIO S3 storage
 - `rabbitmq` - Message queue
@@ -404,7 +435,7 @@ All services are accessible by their container names:
 ## 📄 Important Notes
 
 - **🚧 Development Only**: This setup is for local development, not production
-- **🔒 Security**: Change default passwords for production-like testing  
+- **🔒 Security**: Change default passwords for production-like testing
 - **🌐 Networking**: All services run on Docker's internal network
 - **💾 Data Persistence**: Data is preserved between container restarts
 - **🔄 Fresh Start**: Use `docker-compose down -v` to reset all data
