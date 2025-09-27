@@ -4,9 +4,13 @@
 [![Docker Compose](https://img.shields.io/badge/Docker%20Compose-2.0+-blue.svg)](https://docs.docker.com/compose/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-> 🐳 **Complete Docker-based development environment** with 8+ pre-configured services for modern web development
+> 🐳 **Complete Docker-based development environment** with 9+ pre-configured services for modern web development
 
-## ⚡ Quick Start
+**Mock Development Environment** is a carefully crafted development stack that prioritizes **developer experience** and **rapid prototyping**. It provides instant access to essential services with visual management interfaces, enabling you to build and test integrations without complex infrastructure setup.
+
+**Key Philosophy:** Create service abstractions that work identically in development and production, allowing seamless transitions from local development to deployed applications.
+
+**⚡ Quick Start in 30 seconds:**
 
 ```bash
 # 1. Clone and navigate
@@ -23,37 +27,44 @@ docker-compose up -d
 docker-compose ps
 ```
 
+⚠️ **Before Starting:** The environment works out-of-the-box for most services, but **Ultrahook requires your own credentials**. If you don't need webhook testing, you can ignore the Ultrahook service. You can change this by editing your Ultrahook variables in your `.env` file.
+
+💾 **SQLite Data:** The SQLite service uses `./example/data` as the default data directory. You can change this by editing `SQLITE_DATA_PATH` in your `.env` file.
+
 ✅ **That's it!** All services are now running and accessible.
 
 ## 📊 Services Overview
 
-| Service            | URL                                       | Default Credentials  | Purpose               |
-| ------------------ | ----------------------------------------- | -------------------- | --------------------- |
-| 🐘 **PostgreSQL**  | `localhost:5432`                          | `devuser/devpass`    | Relational database   |
-| 🍃 **MongoDB**     | `localhost:27017`                         | `devuser/devpass`    | Document database     |
-| 🔴 **Redis**       | `localhost:6379`                          | No auth              | Cache & sessions      |
-| 📦 **MinIO**       | [localhost:9001](http://localhost:9001)   | `devuser/devpass123` | S3-compatible storage |
-| 📧 **MailCatcher** | [localhost:1080](http://localhost:1080)   | No auth              | Email testing         |
-| 🐰 **RabbitMQ**    | [localhost:15672](http://localhost:15672) | `devuser/devpass`    | Message broker        |
-| 📈 **Grafana**     | [localhost:3000](http://localhost:3000)   | `admin/admin`        | Monitoring & logs     |
-| 🗃️ **SQLite**      | [localhost:8083](http://localhost:8083)   | No auth              | Lightweight database  |
-| 🌐 **Ultrahook**   | Custom URL                                | Your credentials     | Webhook tunnel        |
+### 🛠️ Core Services
+
+| Service           | Host Port | Container Port | Credentials          | Purpose               |
+| ----------------- | --------- | -------------- | -------------------- | --------------------- |
+| 🐘 **PostgreSQL** | 5432      | 5432           | `devuser/devpass`    | Relational database   |
+| 🍃 **MongoDB**    | 27017     | 27017          | `devuser/devpass`    | Document database     |
+| 🔴 **Redis**      | 6379      | 6379           | No auth              | Cache & sessions      |
+| 📦 **MinIO API**  | 9000      | 9000           | `devuser/devpass123` | S3-compatible storage |
+| � **MailCatcher** | 1025      | 1025           | No auth              | SMTP server           |
+| 🐰 **RabbitMQ**   | 5672      | 5672           | `devuser/devpass`    | Message broker        |
+| � **Loki**        | 3100      | 3100           | No auth              | Log aggregation       |
+| 🌐 **Ultrahook**  | 5000      | 5000           | Your credentials     | Webhook tunnel        |
 
 ### 🎛️ Web Management Interfaces
 
-- **pgAdmin**: [localhost:5050](http://localhost:5050) - PostgreSQL admin
-- **Mongo Express**: [localhost:8081](http://localhost:8081) - MongoDB admin
-- **Redis Commander**: [localhost:8082](http://localhost:8082) - Redis admin
-- **MinIO Console**: [localhost:9001](http://localhost:9001) - File storage admin
-- **SQLite Web**: [localhost:8083](http://localhost:8083) - SQLite admin
-- **RabbitMQ Management**: [localhost:15672](http://localhost:15672) - Queue admin
-
-**🎯 Goal**: Provide a complete development infrastructure so your applications can easily connect to databases, queues, storage, and external services during development.
+| Interface              | URL                                       | Host Port | Container Port | Credentials           | Purpose           |
+| ---------------------- | ----------------------------------------- | --------- | -------------- | --------------------- | ----------------- |
+| � **pgAdmin**          | [localhost:5050](http://localhost:5050)   | 5050      | 80             | `admin@dev.com/admin` | PostgreSQL admin  |
+| 🌐 **Mongo Express**   | [localhost:8081](http://localhost:8081)   | 8081      | 8081           | `devuser/devpass`     | MongoDB admin     |
+| ⚡ **Redis Commander** | [localhost:8082](http://localhost:8082)   | 8082      | 8081           | `admin/admin`         | Redis admin       |
+| 📦 **MinIO Console**   | [localhost:9001](http://localhost:9001)   | 9001      | 9001           | `devuser/devpass123`  | S3 web interface  |
+| � **MailCatcher UI**   | [localhost:1080](http://localhost:1080)   | 1080      | 1080           | No auth               | Email testing     |
+| � **RabbitMQ Mgmt**    | [localhost:15672](http://localhost:15672) | 15672     | 15672          | `devuser/devpass`     | Queue management  |
+| 📈 **Grafana**         | [localhost:3000](http://localhost:3000)   | 3000      | 3000           | `admin/admin`         | Monitoring & logs |
+| 🗃️ **SQLite Web**      | [localhost:8083](http://localhost:8083)   | 8083      | 8080           | No auth               | SQLite admin      |
 
 ## 📁 Project Structure
 
 ```
-docker/
+mock-dev-env/
 ├─ docker-compose.yml
 ├─ .env-example          # Template with default values
 ├─ minio/
@@ -62,7 +73,6 @@ docker/
 │  ├─ server.js          # Webhook receiver server (port 3001)
 │  ├─ index.js           # Test runner for all services
 │  └─ package.json       # Dependencies for examples
-└─ test-app/
 ```
 
 Optional files:
@@ -70,76 +80,25 @@ Optional files:
 - postgres/init.sql → create initial tables/data in Postgres
 - minio/config.json → configure buckets in MinIO
 
-## ⚙️ Environment Configuration
-
-> **📋 Important**: You must create a `.env` file before starting the services.
-
-### 🚀 Quick Setup (Recommended)
-
-For most users, the default values work perfectly:
-
-```bash
-# Linux/macOS
-cp .env-example .env
-
-# Windows (Command Prompt)
-copy .env-example .env
-
-# Windows (PowerShell)
-Copy-Item .env-example .env
-```
-
 ### 🔧 Custom Configuration
 
-For advanced users or specific requirements:
-
-1. **Copy the template**: `cp .env-example .env`
-2. **Edit the file**: `nano .env` (or your preferred editor)
-3. **Customize these important variables**:
-
 ```bash
-# 🌐 Ultrahook - Required for webhook functionality
-ULTRAHOOK_NAMESPACE=<your-namespace-here>
-ULTRAHOOK_API_KEY=<your-api-key-here>
+# Ultrahook - Required for webhook functionality
+ULTRAHOOK_NAMESPACE=your-namespace-here
+ULTRAHOOK_API_KEY=your-api-key-here
 
 # SQLite - Configure data directory path
-SQLITE_DATA_PATH=./your-project/data
-
-# Security - Recommended for production-like testing
-POSTGRES_PASSWORD=<your-secure-password>
-GRAFANA_ADMIN_PASSWORD=<your-admin-password>
+SQLITE_DATA_PATH=./example/data  # Default: uses existing example data
 ```
 
-**🌐 Ultrahook Setup** (for webhook testing):
+**Ultrahook Setup** (for webhook testing):
 
 1. Sign up at [ultrahook.com](https://www.ultrahook.com)
 2. Get your API key from the dashboard
 3. Choose a unique namespace
 4. Update the values in your `.env` file
 
-> **💡 Tip**: Leave other values as defaults unless you have specific requirements.
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- **Docker** (20.10+) and **Docker Compose** (2.0+)
-- **Git** for cloning the repository
-
-### Start All Services
-
-```bash
-# Navigate to project folder
-cd mock-dev-env
-
-# Start all services in background
-docker-compose up -d
-
-# Check everything is running
-docker-compose ps
-```
-
-### Useful Commands
+## Useful Commands
 
 ```bash
 # View logs from all services
@@ -158,158 +117,188 @@ docker-compose down -v
 docker-compose restart ultrahook
 ```
 
-## 📋 Service Details
+---
 
-> **💡 Quick Reference**: See the [Services Overview](#-services-overview) table above for URLs and credentials.
+## 🎯 Project Motivation & Philosophy
+
+### **Why Mock Development Environment?**
+
+This project was created to solve a common development challenge: **easily integrating with multiple services during development** without the complexity of production infrastructure setup. It provides instant access to essential services with **visual management interfaces**, enabling developers to focus on building features rather than configuring infrastructure.
+
+### **🚀 Core Objectives**
+
+#### **1. Rapid Development Integration**
+
+- **Instant Access**: Get databases, queues, storage, and monitoring tools running in seconds
+- **Visual Interfaces**: Every service includes a web-based management interface for easy inspection and debugging
+- **Zero Configuration**: Works out-of-the-box with sensible defaults, customizable when needed
+
+#### **2. Development-Production Parity**
+
+This environment encourages **abstraction patterns** that work seamlessly across development and production:
+
+**Example: Email Service Integration**
+
+```javascript
+// 🏗️ Development Implementation
+class DevEmailService {
+  async send(email) {
+    // Simple SMTP to MailCatcher - visible in web UI
+    return nodemailer.send(email, { host: "mailcatcher", port: 1025 });
+  }
+}
+
+// 🚀 Production Implementation
+class ProdEmailService {
+  async send(email) {
+    // Real service SDK (SendGrid, AWS SES, etc.)
+    return sendgrid.send(email);
+  }
+}
+
+// 🔧 Usage (same interface, different implementations)
+const emailService =
+  process.env.NODE_ENV === "production"
+    ? new ProdEmailService()
+    : new DevEmailService();
+```
+
+#### **3. Service Exploration & Learning**
+
+- **Hands-on Experience**: Interact with real services (PostgreSQL, MongoDB, Redis, etc.) through web interfaces
+- **Safe Environment**: Experiment freely without affecting production systems
+- **Complete Stack**: Experience how different services work together in a typical application
+
+#### **What This Project IS:**
+
+✅ **Development accelerator** - Get services running instantly  
+✅ **Learning platform** - Explore technologies with visual interfaces  
+✅ **Integration testing** - Test service interactions locally  
+✅ **Prototype foundation** - Quick setup for MVPs and experiments
+
+#### **What This Project IS NOT:**
+
+❌ **Production infrastructure** - Not designed for production workloads  
+❌ **Full orchestration solution** - No complex networking, load balancing, or scaling  
+❌ **Production-grade security** - Uses development credentials and simple configurations  
+❌ **Performance-optimized** - Prioritizes convenience over performance
+
+#### **🌍 Platform Expected Migration Scenarios**
+
+| Platform Type   | Examples                                 | Migration Complexity | Why It's Smooth                                   |
+| --------------- | ---------------------------------------- | -------------------- | ------------------------------------------------- |
+| **🟢 Simple**   | Railway, Render, DO Apps                 | Very Low             | Managed PostgreSQL/Redis work identically         |
+| **🟡 Moderate** | Vercel + Supabase, Netlify + PlanetScale | Low                  | Same SQL patterns, enhanced with serverless       |
+| **🟠 Advanced** | AWS, GCP, Azure                          | Medium               | Service abstractions provide clear migration path |
+
+---
+
+## � Advanced Configuration
+
+> **💡 Quick Reference**: See the [Services Overview](#-services-overview) table for URLs, ports and basic credentials.
 
 <details>
-<summary><strong>🐘 PostgreSQL Configuration</strong></summary>
+<summary><strong>🐘 PostgreSQL - Connection Details</strong></summary>
 
-**Connection Details:**
+**Internal/External Hostnames:**
 
-- Host: `localhost:5432` (external) or `postgres:5432` (internal)
-- Database: `devdb`
-- User/Pass: `devuser/devpass`
+- External (from host): `localhost:5432`
+- Internal (from containers): `postgres:5432`
 
-**pgAdmin Access:**
+**pgAdmin Setup:**
 
-- URL: [localhost:5050](http://localhost:5050)
-- Login: `admin@dev.com` / `admin`
-- **Setup**: Create new server with hostname `postgres`, port `5432`
+1. Create new server with hostname `postgres`, port `5432`
+2. Use database credentials from Services Overview table
+
 </details>
 
 <details>
-<summary><strong>🍃 MongoDB Configuration</strong></summary>
-
-**Connection Details:**
-
-- URI: `mongodb://devuser:devpass@localhost:27017` (external)
-- URI: `mongodb://devuser:devpass@mongo:27017` (internal)
-
-**Mongo Express Access:**
-
-- URL: [localhost:8081](http://localhost:8081)
-- Login: `devuser/devpass`
-</details>
-
-<details>
-<summary><strong>🔴 Redis Configuration</strong></summary>
-
-**Connection Details:**
-
-- Host: `localhost:6379` (external) or `redis:6379` (internal)
-- No password required
-
-**Redis Commander:**
-
-- URL: [localhost:8082](http://localhost:8082)
-- Login: `admin/admin`
-
-**CLI Access:**
+<summary><strong>🍃 MongoDB - Connection Strings</strong></summary>
 
 ```bash
+# External connection (from host)
+mongodb://devuser:devpass@localhost:27017
+
+# Internal connection (from containers)
+mongodb://devuser:devpass@mongo:27017
+```
+
+</details>
+
+<details>
+<summary><strong>🔴 Redis - CLI Access</strong></summary>
+
+```bash
+# Access Redis CLI
 docker exec -it dev_redis redis-cli
 ```
 
 </details>
 
 <details>
-<summary><strong>📦 MinIO (S3) Configuration</strong></summary>
+<summary><strong>📦 MinIO - S3 SDK Configuration</strong></summary>
 
-**Connection Details:**
+```javascript
+// SDK configuration example
+const s3Client = new S3Client({
+  endpoint: "http://localhost:9000",
+  credentials: {
+    accessKeyId: "devuser",
+    secretAccessKey: "devpass123",
+  },
+  region: "us-east-1", // Required but can be any value
+});
+```
 
-- API Endpoint: `http://localhost:9000`
-- Access Key: `devuser`
-- Secret Key: `devpass123`
-- Default Bucket: `test`
+Default bucket: `test`
 
-**Web Console:**
-
-- URL: [localhost:9001](http://localhost:9001)
-- Login: `devuser/devpass123`
 </details>
 
 <details>
-<summary><strong>📧 MailCatcher Configuration</strong></summary>
+<summary><strong>📧 MailCatcher - SMTP Integration</strong></summary>
 
-**SMTP Settings (for your app):**
+**For your applications:**
 
-- Host: `mailcatcher` or `localhost`
-- Port: `1025`
+- SMTP Host: `mailcatcher` (from containers) or `localhost` (from host)
+- SMTP Port: `1025`
 - No authentication required
 
-**Web Interface:**
-
-- URL: [localhost:1080](http://localhost:1080)
-- View all sent emails here
 </details>
 
 <details>
-<summary><strong>🐰 RabbitMQ Configuration</strong></summary>
+<summary><strong>🐰 RabbitMQ - Connection Details</strong></summary>
 
-**Connection Details:**
+**Connection URLs:**
 
-- Host: `rabbitmq:5672` (internal) or `localhost:5672` (external)
-- User/Pass: `devuser/devpass`
-- Default Queue: `test-queue`
+- External: `amqp://devuser:devpass@localhost:5672`
+- Internal: `amqp://devuser:devpass@rabbitmq:5672`
 
-**Management UI:**
+Default queue: `test-queue`
 
-- URL: [localhost:15672](http://localhost:15672)
-- Login: `devuser/devpass`
 </details>
 
 <details>
-<summary><strong>📈 Grafana & Loki Setup</strong></summary>
+<summary><strong>📈 Grafana - Loki Integration Setup</strong></summary>
 
-**Grafana Access:**
-
-- URL: [localhost:3000](http://localhost:3000)
-- Login: `admin/admin`
-
-**Loki Configuration:**
+**Configure Loki as Data Source:**
 
 1. Go to **Configuration → Data Sources → Add Loki**
 2. Set URL to: `http://loki:3100`
 3. Save & Test
 
-**Viewing Logs:**
+**Example LogQL Queries:**
 
-- Go to **Explore** section
-- Use LogQL queries like: `{service="test-service", env="dev"}`
+```
+{service="test-service", env="dev"}
+{container="dev_postgres"} |= "error"
+```
+
 </details>
 
 <details>
-<summary><strong>🗃️ SQLite Configuration</strong></summary>
+<summary><strong>🗃️ SQLite - Application Integration</strong></summary>
 
-**Environment Variables:**
-
-- `SQLITE_WEB_PORT` - Port for web interface (default: 8083)
-- `SQLITE_DB_NAME` - Database filename (default: devdb.sqlite)
-- `SQLITE_DATA_PATH` - Host path to mount as data directory (e.g., ./your-project/data)
-
-**Database Access:**
-
-- Database File: `/data/${SQLITE_DB_NAME}` (inside container)
-- External Path: Configurable via `SQLITE_DATA_PATH` environment variable
-- No authentication required
-
-**Web Interface:**
-
-- URL: [localhost:8083](http://localhost:8083)
-- Features: Browse tables, execute SQL queries, view data
-- Auto-creates database file on first access
-
-**Setup Example:**
-
-```bash
-# In your .env file
-SQLITE_DATA_PATH=./my-app/database
-SQLITE_DB_NAME=myapp.sqlite
-SQLITE_WEB_PORT=8083
-```
-
-**Connection from Applications:**
+**Connection Examples:**
 
 ```javascript
 // From host machine (development)
@@ -322,47 +311,35 @@ const dbPath = "/data/" + process.env.SQLITE_DB_NAME;
 **CLI Access:**
 
 ```bash
-# Access SQLite CLI inside container
-docker exec -it dev_sqlite_web sqlite3 /data/${SQLITE_DB_NAME}
+docker exec -it dev_sqlite_web sqlite3 /data/devdb.sqlite
 ```
+
+**Environment Variables:**
+
+- `SQLITE_WEB_PORT=8083` - Web interface port
+- `SQLITE_DB_NAME=devdb.sqlite` - Database filename
+- `SQLITE_DATA_PATH=./example/data` - Data directory path
 
 </details>
 
 <details>
-<summary><strong>🌐 Ultrahook Configuration</strong></summary>
+<summary><strong>🌐 Ultrahook - Webhook Testing Setup</strong></summary>
 
-Ultrahook requires your own account and API key. See the **Environment Configuration** section for setup instructions.
-
-After configuring your `.env` file:
+**After configuring your `.env` file:**
 
 ```bash
 docker-compose restart ultrahook
 ```
 
-Your tunnel will be available at: `http://your-namespace.your-namespace.ultrahook.com`
+Your tunnel will be available at: `http://your-namespace.ultrahook.com`
+
+**Troubleshooting:**
+
+- Verify credentials in `.env`
+- Check logs: `docker logs dev_ultrahook`
+- Test local endpoint first: `curl -X POST http://localhost:3001/webhook-test`
 
 </details>
-
-### Summary of Exposed Ports
-
-| Service          | Host Port | Container Port |
-| ---------------- | --------- | -------------- |
-| PostgreSQL       | 5432      | 5432           |
-| pgAdmin          | 5050      | 80             |
-| MongoDB          | 27017     | 27017          |
-| Mongo Express    | 8081      | 8081           |
-| Redis            | 6379      | 6379           |
-| Redis Commander  | 8082      | 8081           |
-| MinIO API        | 9000      | 9000           |
-| MinIO Console    | 9001      | 9001           |
-| MailCatcher SMTP | 1025      | 1025           |
-| MailCatcher Web  | 1080      | 1080           |
-| RabbitMQ         | 5672      | 5672           |
-| RabbitMQ UI      | 15672     | 15672          |
-| Grafana UI       | 3000      | 3000           |
-| Loki API         | 3100      | 3100           |
-| SQLite Web       | 8083      | 8080           |
-| Ultrahook        | 5000      | 5000           |
 
 ## 🧪 Testing & Examples
 
@@ -455,50 +432,13 @@ node -e "import('./services/ultrahook.js').then(m => m.sendTestWebhook())"
 - Check credentials match your `.env` file
 </details>
 
-## 💡 Development Tips
-
-### Connecting from Your Application
-
-```javascript
-// ✅ Correct - Use service names for inter-container communication
-const dbConfig = {
-  host: "postgres", // Not 'localhost'!
-  port: 5432,
-  user: "devuser",
-  password: "devpass",
-};
-
-// ✅ For external connections (from your IDE, etc.)
-const externalConfig = {
-  host: "localhost", // or '127.0.0.1'
-  port: 5432,
-  user: "devuser",
-  password: "devpass",
-};
-```
-
-### Service Discovery
-
-All services are accessible by their container names:
-
-- `postgres` - PostgreSQL database
-- `mongo` - MongoDB database
-- `redis` - Redis cache
-- `minio` - MinIO S3 storage
-- `rabbitmq` - Message queue
-- `loki` - Log aggregation
-
-## 📄 Important Notes
-
-- **🚧 Development Only**: This setup is for local development, not production
-- **🔒 Security**: Change default passwords for production-like testing
-- **🌐 Networking**: All services run on Docker's internal network
-- **💾 Data Persistence**: Data is preserved between container restarts
-- **🔄 Fresh Start**: Use `docker-compose down -v` to reset all data
-
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit issues and pull requests.
+1. Fork repo → Create branch → Add your service
+2. Follow existing patterns and update documentation
+3. Test integration → Submit PR with clear description
+
+**Questions?** Open an issue to discuss ideas!
 
 ## 📄 License
 
@@ -507,3 +447,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 **⭐ Found this helpful?** Give it a star and share with your team!
+
+**💬 Have questions or suggestions?** Open an issue - we'd love to hear from you!
