@@ -36,6 +36,7 @@ docker-compose ps
 | 📧 **MailCatcher** | [localhost:1080](http://localhost:1080)   | No auth              | Email testing         |
 | 🐰 **RabbitMQ**    | [localhost:15672](http://localhost:15672) | `devuser/devpass`    | Message broker        |
 | 📈 **Grafana**     | [localhost:3000](http://localhost:3000)   | `admin/admin`        | Monitoring & logs     |
+| 🗃️ **SQLite**      | [localhost:8083](http://localhost:8083)   | No auth              | Lightweight database  |
 | 🌐 **Ultrahook**   | Custom URL                                | Your credentials     | Webhook tunnel        |
 
 ### 🎛️ Web Management Interfaces
@@ -44,6 +45,7 @@ docker-compose ps
 - **Mongo Express**: [localhost:8081](http://localhost:8081) - MongoDB admin
 - **Redis Commander**: [localhost:8082](http://localhost:8082) - Redis admin
 - **MinIO Console**: [localhost:9001](http://localhost:9001) - File storage admin
+- **SQLite Web**: [localhost:8083](http://localhost:8083) - SQLite admin
 - **RabbitMQ Management**: [localhost:15672](http://localhost:15672) - Queue admin
 
 **🎯 Goal**: Provide a complete development infrastructure so your applications can easily connect to databases, queues, storage, and external services during development.
@@ -100,7 +102,10 @@ For advanced users or specific requirements:
 ULTRAHOOK_NAMESPACE=<your-namespace-here>
 ULTRAHOOK_API_KEY=<your-api-key-here>
 
-# 🔒 Security - Recommended for production-like testing
+# SQLite - Configure data directory path
+SQLITE_DATA_PATH=./your-project/data
+
+# Security - Recommended for production-like testing
 POSTGRES_PASSWORD=<your-secure-password>
 GRAFANA_ADMIN_PASSWORD=<your-admin-password>
 ```
@@ -275,6 +280,55 @@ docker exec -it dev_redis redis-cli
 </details>
 
 <details>
+<summary><strong>🗃️ SQLite Configuration</strong></summary>
+
+**Environment Variables:**
+
+- `SQLITE_WEB_PORT` - Port for web interface (default: 8083)
+- `SQLITE_DB_NAME` - Database filename (default: devdb.sqlite)
+- `SQLITE_DATA_PATH` - Host path to mount as data directory (e.g., ./your-project/data)
+
+**Database Access:**
+
+- Database File: `/data/${SQLITE_DB_NAME}` (inside container)
+- External Path: Configurable via `SQLITE_DATA_PATH` environment variable
+- No authentication required
+
+**Web Interface:**
+
+- URL: [localhost:8083](http://localhost:8083)
+- Features: Browse tables, execute SQL queries, view data
+- Auto-creates database file on first access
+
+**Setup Example:**
+
+```bash
+# In your .env file
+SQLITE_DATA_PATH=./my-app/database
+SQLITE_DB_NAME=myapp.sqlite
+SQLITE_WEB_PORT=8083
+```
+
+**Connection from Applications:**
+
+```javascript
+// From host machine (development)
+const dbPath = process.env.SQLITE_DATA_PATH + "/" + process.env.SQLITE_DB_NAME;
+
+// From other containers
+const dbPath = "/data/" + process.env.SQLITE_DB_NAME;
+```
+
+**CLI Access:**
+
+```bash
+# Access SQLite CLI inside container
+docker exec -it dev_sqlite_web sqlite3 /data/${SQLITE_DB_NAME}
+```
+
+</details>
+
+<details>
 <summary><strong>🌐 Ultrahook Configuration</strong></summary>
 
 Ultrahook requires your own account and API key. See the **Environment Configuration** section for setup instructions.
@@ -307,6 +361,7 @@ Your tunnel will be available at: `http://your-namespace.your-namespace.ultrahoo
 | RabbitMQ UI      | 15672     | 15672          |
 | Grafana UI       | 3000      | 3000           |
 | Loki API         | 3100      | 3100           |
+| SQLite Web       | 8083      | 8080           |
 | Ultrahook        | 5000      | 5000           |
 
 ## 🧪 Testing & Examples
@@ -329,6 +384,7 @@ cd example
 # Test specific services
 node -e "import('./services/postgres.js').then(m => m.createRegisterPostgres())"
 node -e "import('./services/mongo.js').then(m => m.createRegisterMongo())"
+node -e "import('./services/sqlite.js').then(m => m.createRegisterSQLite())"
 node -e "import('./services/ultrahook.js').then(m => m.sendTestWebhook())"
 ```
 

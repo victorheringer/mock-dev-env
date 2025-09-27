@@ -5,6 +5,7 @@ import { sendEmail } from "./services/mail.js";
 import { createFileMinio } from "./services/minio.js";
 import { createTestRabbitMQ } from "./services/rabbitmq.js";
 import { sendTestLogLoki } from "./services/loki.js";
+import { createRegisterSQLite } from "./services/sqlite.js";
 import { sendTestWebhook } from "./services/ultrahook.js";
 
 async function main() {
@@ -28,6 +29,9 @@ async function main() {
 
   console.log("\n=== Testing Grafana/Loki ===");
   await sendTestLogLoki();
+
+  console.log("\n=== Testing SQLite ===");
+  await createRegisterSQLite();
 
   console.log("\n=== Testing Ultrahook ===");
   await sendTestWebhook();

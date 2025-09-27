@@ -150,6 +150,18 @@ services:
     entrypoint: >
       sh -c 'exec ultrahook ${ULTRAHOOK_NAMESPACE} ${ULTRAHOOK_LOCAL_URL}'
 
+  sqlite-web:
+    image: coleifer/sqlite-web
+    container_name: dev_sqlite_web
+    restart: always
+    environment:
+      SQLITE_DATABASE: "/data/${SQLITE_DB_NAME}"
+    ports:
+      - "${SQLITE_WEB_PORT}:8080"
+    volumes:
+      - ${SQLITE_DATA_PATH}:/data
+    command: sqlite_web /data/${SQLITE_DB_NAME} --host 0.0.0.0 --port 8080 --no-browser
+
 volumes:
   postgres_data:
   mongo_data:
