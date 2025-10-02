@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   postgres:
-    image: postgres:15
+    image: docker.io/library/postgres:15
     container_name: dev_postgres
     restart: always
     environment:
@@ -15,7 +15,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   pgadmin:
-    image: dpage/pgadmin4
+    image: docker.io/dpage/pgadmin4
     container_name: dev_pgadmin
     restart: always
     environment:
@@ -25,7 +25,7 @@ services:
       - "${PGADMIN_PORT}:80"
 
   mongo:
-    image: mongo:6
+    image: docker.io/library/mongo:6
     container_name: dev_mongo
     restart: always
     environment:
@@ -37,7 +37,7 @@ services:
       - mongo_data:/data/db
 
   mongo-express:
-    image: mongo-express
+    image: docker.io/library/mongo-express
     container_name: dev_mongo_express
     restart: always
     environment:
@@ -50,7 +50,7 @@ services:
       - "${MONGO_EXPRESS_PORT}:8081"
 
   redis:
-    image: redis:7
+    image: docker.io/library/redis:7
     container_name: dev_redis
     restart: always
     ports:
@@ -59,7 +59,7 @@ services:
       - redis_data:/data
 
   redis-commander:
-    image: rediscommander/redis-commander:latest
+    image: docker.io/rediscommander/redis-commander:latest
     container_name: dev_redis_commander
     restart: always
     environment:
@@ -70,7 +70,7 @@ services:
       - "${REDIS_COMMANDER_PORT}:8081"
 
   minio:
-    image: minio/minio
+    image: docker.io/minio/minio
     container_name: dev_minio
     command: server /data --console-address ":${MINIO_CONSOLE_PORT}"
     restart: always
@@ -84,7 +84,7 @@ services:
       - minio_data:/data
 
   mc:
-    image: minio/mc
+    image: docker.io/minio/mc
     container_name: dev_minio_client
     entrypoint: /bin/sh
     stdin_open: true
@@ -93,7 +93,7 @@ services:
       MC_HOST_localminio: http://${MINIO_ROOT_USER}:${MINIO_ROOT_PASSWORD}@minio:${MINIO_PORT}
 
   mailcatcher:
-    image: schickling/mailcatcher
+    image: docker.io/schickling/mailcatcher
     container_name: dev_mailcatcher
     restart: always
     ports:
@@ -101,7 +101,7 @@ services:
       - "${MAILCATCHER_WEB_PORT}:1080"
 
   rabbitmq:
-    image: rabbitmq:management
+    image: docker.io/library/rabbitmq:management
     container_name: dev_rabbitmq
     restart: always
     environment:
@@ -112,7 +112,7 @@ services:
       - "${RABBITMQ_MANAGEMENT_PORT}:15672"
 
   loki:
-    image: grafana/loki:latest
+    image: docker.io/grafana/loki:latest
     container_name: dev_loki
     restart: always
     command: -config.file=/etc/loki/local-config.yaml
@@ -122,7 +122,7 @@ services:
       - loki_data:/loki
 
   grafana:
-    image: grafana/grafana:latest
+    image: docker.io/grafana/grafana:latest
     container_name: dev_grafana
     restart: always
     environment:
@@ -140,7 +140,7 @@ services:
 
   ultrahook:
     container_name: dev_ultrahook
-    image: stacksimple/ultrahook:latest
+    image: docker.io/stacksimple/ultrahook:latest
     environment:
       ULTRAHOOK_API_KEY: "${ULTRAHOOK_API_KEY}"
       ULTRAHOOK_LOCAL_URL: "${ULTRAHOOK_LOCAL_URL}"
@@ -151,7 +151,7 @@ services:
       sh -c 'exec ultrahook ${ULTRAHOOK_NAMESPACE} ${ULTRAHOOK_LOCAL_URL}'
 
   sqlite-web:
-    image: coleifer/sqlite-web
+    image: docker.io/coleifer/sqlite-web
     container_name: dev_sqlite_web
     restart: always
     environment:
