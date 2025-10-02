@@ -98,7 +98,101 @@ SQLITE_DATA_PATH=./example/data  # Default: uses existing example data
 3. Choose a unique namespace
 4. Update the values in your `.env` file
 
-## Useful Commands
+## ⚡ Makefile Commands
+
+This project includes a powerful Makefile for easy container management with support for multiple development contexts.
+
+### 📋 Quick Reference
+
+```bash
+# Show all available commands
+make help
+
+# Start all containers
+make up-all
+
+# Stop all containers
+make down-all
+
+# View container status
+make ps
+```
+
+### 🎯 Context-Based Management
+
+Define container groups for different development scenarios in your `.env` file:
+
+```bash
+# Example contexts in .env
+SELECTED_CONTAINERS_DB=dev_postgres,dev_pgadmin,dev_mongo,dev_mongo_express
+SELECTED_CONTAINERS_CACHE=dev_redis,dev_redis_commander,dev_rabbitmq
+SELECTED_CONTAINERS_MY_CONTEXT=dev_pgadmin,dev_mongo,dev_mongo_express
+```
+
+**Use contexts to start only what you need:**
+
+```bash
+# Start containers for a specific context
+make up my_context      # Starts: dev_pgadmin, dev_mongo, dev_mongo_express
+make up db              # Starts: dev_postgres, dev_pgadmin, dev_mongo, dev_mongo_express
+make up cache           # Starts: dev_redis, dev_redis_commander, dev_rabbitmq
+
+# Stop containers from a context
+make down my_context
+
+# Restart containers in a context
+make restart db
+
+# View logs for a context
+make logs cache
+```
+
+### 📚 All Available Commands
+
+| Command                  | Description                                        |
+| ------------------------ | -------------------------------------------------- |
+| `make help`              | Show help with all available commands              |
+| `make up <context>`      | Start containers defined in a specific context     |
+| `make down <context>`    | Stop containers from a specific context            |
+| `make restart <context>` | Restart containers in a specific context           |
+| `make logs <context>`    | Show logs for containers in a specific context     |
+| `make up-all`            | Start all containers defined in docker-compose.yml |
+| `make down-all`          | Stop all containers                                |
+| `make restart-all`       | Restart all containers                             |
+| `make stop-all`          | Stop all containers without removing them          |
+| `make start-all`         | Start all previously stopped containers            |
+| `make ps`                | List running containers                            |
+| `make status`            | Show detailed status of all containers             |
+| `make logs-all`          | Show logs from all containers                      |
+| `make pull`              | Update all Docker images                           |
+| `make clean`             | Remove containers, volumes and networks ⚠️         |
+| `make clean-images`      | Remove containers, volumes, networks and images ⚠️ |
+
+### 💡 Context Configuration Examples
+
+Add these to your `.env` file to create custom development contexts:
+
+```bash
+# Database development
+SELECTED_CONTAINERS_DB=dev_postgres,dev_pgadmin,dev_mongo,dev_mongo_express
+
+# Cache and message queue development
+SELECTED_CONTAINERS_CACHE=dev_redis,dev_redis_commander,dev_rabbitmq
+
+# Storage and email testing
+SELECTED_CONTAINERS_STORAGE=dev_minio,dev_minio_client,dev_mailcatcher
+
+# Monitoring stack
+SELECTED_CONTAINERS_MONITORING=dev_loki,dev_grafana
+
+# Minimal setup for quick tests
+SELECTED_CONTAINERS_MINIMAL=dev_postgres,dev_redis
+
+# Full web development stack
+SELECTED_CONTAINERS_WEB=dev_postgres,dev_redis,dev_mailcatcher,dev_minio
+```
+
+### 🔍 Useful Docker Commands
 
 ```bash
 # View logs from all services
@@ -107,14 +201,13 @@ docker-compose logs -f
 # View logs from specific service
 docker-compose logs -f postgres
 
-# Stop all services (keeps data)
-docker-compose down
+# Execute commands in a container
+docker exec -it dev_postgres psql -U devuser -d devdb
+docker exec -it dev_redis redis-cli
+docker exec -it dev_mongo mongosh -u devuser -p devpass
 
-# Stop and remove all data (fresh start)
-docker-compose down -v
-
-# Restart specific service
-docker-compose restart ultrahook
+# Inspect container details
+docker inspect dev_postgres
 ```
 
 ---
